@@ -1,5 +1,5 @@
 const FLICKR_API_KEY = '15786247322ab080d4926abdc12b1e40';
-const GROUP_ID = '1551955@N23'; // Group ID for "Field Guide: Birds of the World"
+const GROUP_ID = '42637302@N00'; // Group ID for "Field Guide: Birds of the World"
 let birdData = [];
 
 // Fetch bird data from Flickr
