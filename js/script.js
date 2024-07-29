@@ -1,8 +1,12 @@
-const FLICKR_API_KEY = 'YOUR_FLICKR_API_KEY';
+const FLICKR_API_KEY = '15786247322ab080d4926abdc12b1e40';
 const GROUP_ID = '3853331@N25'; // Group ID for "Field Guide: Birds of the World"
 let currentQuestionIndex = 0;
 let birdData = [];
 
+//15786247322ab080d4926abdc12b1e40
+
+//Secret:
+//3b9ac99dfd2c3dff
 async function fetchBirdData() {
     const response = await fetch(`https://api.flickr.com/services/rest/?method=flickr.groups.pools.getPhotos&api_key=${FLICKR_API_KEY}&group_id=${GROUP_ID}&per_page=10&format=json&nojsoncallback=1`);
     const data = await response.json();
