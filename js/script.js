@@ -3,19 +3,27 @@ const GROUP_ID = '3853331@N25'; // Group ID for "Field Guide: Birds of the World
 let currentQuestionIndex = 0;
 let birdData = [];
 
-//15786247322ab080d4926abdc12b1e40
-
-//Secret:
-//3b9ac99dfd2c3dff
 async function fetchBirdData() {
-    const response = await fetch(`https://api.flickr.com/services/rest/?method=flickr.groups.pools.getPhotos&api_key=${FLICKR_API_KEY}&group_id=${GROUP_ID}&per_page=10&format=json&nojsoncallback=1`);
-    const data = await response.json();
-    birdData = data.photos.photo.map(photo => ({
-        image_url: `https://live.staticflickr.com/${photo.server}/${photo.id}_${photo.secret}_w.jpg`,
-        options: generateOptions(photo),
-        correct_answer: photo.title || 'Bird'
-    }));
-    loadNextQuestion();
+    try {
+        const response = await fetch(`https://api.flickr.com/services/rest/?method=flickr.groups.pools.getPhotos&api_key=${FLICKR_API_KEY}&group_id=${GROUP_ID}&per_page=10&format=json&nojsoncallback=1`);
+        const data = await response.json();
+        
+        // Debug: Log data to check structure
+        console.log(data);
+        
+        if (data.photos && data.photos.photo.length > 0) {
+            birdData = data.photos.photo.map(photo => ({
+                image_url: `https://live.staticflickr.com/${photo.server}/${photo.id}_${photo.secret}_w.jpg`,
+                options: generateOptions(photo),
+                correct_answer: photo.title || 'Bird'
+            }));
+            loadNextQuestion();
+        } else {
+            console.error('No photos found.');
+        }
+    } catch (error) {
+        console.error('Error fetching bird data:', error);
+    }
 }
 
 function generateOptions(photo) {
@@ -38,7 +46,13 @@ function loadNextQuestion() {
     }
     
     const bird = birdData[currentQuestionIndex];
-    document.getElementById('bird-image').src = bird.image_url;
+    const birdImageElement = document.getElementById('bird-image');
+    
+    if (birdImageElement) {
+        birdImageElement.src = bird.image_url;
+    } else {
+        console.error('No element with id "bird-image" found.');
+    }
     
     const optionsContainer = document.getElementById('options');
     optionsContainer.innerHTML = '';
