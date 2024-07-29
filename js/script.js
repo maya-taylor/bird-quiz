@@ -1,11 +1,10 @@
 const FLICKR_API_KEY = '15786247322ab080d4926abdc12b1e40';
 const GROUP_ID = '3853331@N25'; // Group ID for "Field Guide: Birds of the World"
-let currentQuestionIndex = 0;
 let birdData = [];
 
 async function fetchBirdData() {
     try {
-        const response = await fetch(`https://api.flickr.com/services/rest/?method=flickr.groups.pools.getPhotos&api_key=${FLICKR_API_KEY}&group_id=${GROUP_ID}&per_page=10&format=json&nojsoncallback=1`);
+        const response = await fetch(`https://api.flickr.com/services/rest/?method=flickr.groups.pools.getPhotos&api_key=${FLICKR_API_KEY}&group_id=${GROUP_ID}&per_page=50&format=json&nojsoncallback=1`);
         const data = await response.json();
         
         // Debug: Log data to check structure
@@ -14,10 +13,9 @@ async function fetchBirdData() {
         if (data.photos && data.photos.photo.length > 0) {
             birdData = data.photos.photo.map(photo => ({
                 image_url: `https://live.staticflickr.com/${photo.server}/${photo.id}_${photo.secret}_w.jpg`,
-                options: generateOptions(photo),
-                correct_answer: photo.title || 'Bird'
+                title: photo.title || 'Bird'
             }));
-            loadNextQuestion();
+            displayRandomImage();
         } else {
             console.error('No photos found.');
         }
@@ -26,6 +24,20 @@ async function fetchBirdData() {
     }
 }
 
+function displayRandomImage() {
+    const randomIndex = Math.floor(Math.random() * birdData.length);
+    const bird = birdData[randomIndex];
+    const birdImageElement = document.getElementById('bird-image');
+    
+    if (birdImageElement) {
+        birdImageElement.src = bird.image_url;
+        birdImageElement.alt = bird.title;
+    } else {
+        console.error('No element with id "bird-image" found.');
+    }
+}
+
+/* Commented out quiz-related functions
 function generateOptions(photo) {
     const options = [photo.title || 'Bird', "Option 2", "Option 3", "Option 4"];
     return shuffleArray(options);
@@ -73,5 +85,6 @@ function checkAnswer(selectedOption, correctAnswer) {
         alert('Wrong!');
     }
 }
+*/
 
 document.addEventListener('DOMContentLoaded', fetchBirdData);
